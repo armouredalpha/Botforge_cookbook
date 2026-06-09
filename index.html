@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROS 2 Differential Drive Robot Workshop</title>
     <style>
         /* ── Reset & Base ─────────────────────────────────── */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --red:        #c0392b;
-            --red-dark:   #96281b;
-            --red-light:  #fadbd8;
-            --red-mid:    #e74c3c;
-            --sidebar-bg: #2c3e50;
-            --sidebar-txt:#ecf0f1;
-            --sidebar-w:  280px;
-            --body-bg:    #f8f8f8;
-            --card-bg:    #ffffff;
-            --text:       #333333;
-            --muted:      #666666;
-            --border:     #e0e0e0;
-            --code-bg:    #f5f2f0;
-            --code-border:#ddd;
-            --tip-border: #27ae60;
-            --warn-border:#e67e22;
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        html { scroll-behavior: smooth; }
+        :root {
+            --red: #c0392b;
+            --red-dark: #96281b;
+            --red-light: #fadbd8;
+            --red-mid: #e74c3c;
+            --sidebar-bg: #2c3e50;
+            --sidebar-txt: #ecf0f1;
+            --sidebar-w: 280px;
+            --body-bg: #f8f8f8;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --muted: #666666;
+            --border: #e0e0e0;
+            --code-bg: #f5f2f0;
+            --code-border: #ddd;
+            --tip-border: #27ae60;
+            --warn-border: #e67e22;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
             font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -46,7 +55,8 @@
             background: var(--sidebar-bg);
             color: var(--sidebar-txt);
             position: fixed;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
             height: 100vh;
             overflow-y: auto;
             display: flex;
@@ -69,17 +79,20 @@
 
         .sidebar-brand .project-sub {
             font-size: 0.78em;
-            color: rgba(255,255,255,0.65);
+            color: rgba(255, 255, 255, 0.65);
             margin-top: 4px;
         }
 
-        .sidebar-nav { padding: 16px 0 30px; flex: 1; }
+        .sidebar-nav {
+            padding: 16px 0 30px;
+            flex: 1;
+        }
 
         .nav-section-title {
             font-size: 0.7em;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            color: rgba(255,255,255,0.45);
+            color: rgba(255, 255, 255, 0.45);
             padding: 14px 18px 5px;
             font-weight: 700;
         }
@@ -87,7 +100,7 @@
         .nav-item {
             display: block;
             padding: 7px 18px 7px 22px;
-            color: rgba(255,255,255,0.75);
+            color: rgba(255, 255, 255, 0.75);
             text-decoration: none;
             font-size: 0.88em;
             border-left: 3px solid transparent;
@@ -98,11 +111,14 @@
         .nav-item:hover,
         .nav-item.active {
             color: #fff;
-            background: rgba(255,255,255,0.07);
+            background: rgba(255, 255, 255, 0.07);
             border-left-color: var(--red-mid);
         }
 
-        .nav-item.sub { padding-left: 32px; font-size: 0.82em; }
+        .nav-item.sub {
+            padding-left: 32px;
+            font-size: 0.82em;
+        }
 
         /* ── Main Content ─────────────────────────────────── */
         #main {
@@ -122,7 +138,7 @@
             position: sticky;
             top: 0;
             z-index: 50;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
 
         .topbar-crumb {
@@ -130,9 +146,18 @@
             color: var(--muted);
         }
 
-        .topbar-crumb a { color: var(--red); text-decoration: none; }
-        .topbar-crumb a:hover { text-decoration: underline; }
-        .topbar-sep { color: var(--border); }
+        .topbar-crumb a {
+            color: var(--red);
+            text-decoration: none;
+        }
+
+        .topbar-crumb a:hover {
+            text-decoration: underline;
+        }
+
+        .topbar-sep {
+            color: var(--border);
+        }
 
         /* content wrapper */
         .content {
@@ -141,7 +166,10 @@
         }
 
         /* ── Typography ───────────────────────────────────── */
-        h1, h2, h3, h4 {
+        h1,
+        h2,
+        h3,
+        h4 {
             color: #2c2c2c;
             font-weight: 700;
             margin-top: 2rem;
@@ -157,7 +185,9 @@
             color: var(--red-dark);
         }
 
-        h1:first-child { margin-top: 0; }
+        h1:first-child {
+            margin-top: 0;
+        }
 
         h2 {
             font-size: 1.45em;
@@ -170,19 +200,33 @@
             color: var(--red-dark);
         }
 
-        h4 { font-size: 1em; color: #444; }
+        h4 {
+            font-size: 1em;
+            color: #444;
+        }
 
-        p { margin-bottom: 0.9rem; }
+        p {
+            margin-bottom: 0.9rem;
+        }
 
-        ul, ol {
+        ul,
+        ol {
             padding-left: 28px;
             margin-bottom: 1rem;
         }
 
-        li { margin-bottom: 5px; }
+        li {
+            margin-bottom: 5px;
+        }
 
-        a { color: var(--red); text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        a {
+            color: var(--red);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
 
         hr {
             border: none;
@@ -222,19 +266,31 @@
         }
 
         /* XML syntax hint colors */
-        pre .tag      { color: #f92672; }
-        pre .attr     { color: #a6e22e; }
-        pre .val      { color: #e6db74; }
-        pre .comment  { color: #75715e; font-style: italic; }
+        pre .tag {
+            color: #f92672;
+        }
+
+        pre .attr {
+            color: #a6e22e;
+        }
+
+        pre .val {
+            color: #e6db74;
+        }
+
+        pre .comment {
+            color: #75715e;
+            font-style: italic;
+        }
 
         /* copy button */
         .copy-btn {
             position: absolute;
             top: 10px;
             right: 10px;
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
             color: #ccc;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 4px 10px;
             border-radius: 4px;
             cursor: pointer;
@@ -244,8 +300,17 @@
             transition: all 0.2s;
         }
 
-        .copy-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
-        .copy-btn.copied { background: #27ae60; color: #fff; border-color: #27ae60; }
+        .copy-btn:hover {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        .copy-btn.copied {
+            background: #27ae60;
+            color: #fff;
+            border-color: #27ae60;
+        }
 
         /* inline-command block (single-line shell) */
         .cmd-block {
@@ -264,9 +329,21 @@
             position: relative;
         }
 
-        .cmd-block .prompt { color: var(--red-mid); user-select: none; flex-shrink: 0; }
-        .cmd-block .cmd-text { flex: 1; word-break: break-all; }
-        .cmd-block .copy-btn { position: static; flex-shrink: 0; }
+        .cmd-block .prompt {
+            color: var(--red-mid);
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .cmd-block .cmd-text {
+            flex: 1;
+            word-break: break-all;
+        }
+
+        .cmd-block .copy-btn {
+            position: static;
+            flex-shrink: 0;
+        }
 
         /* ── Callout Boxes ────────────────────────────────── */
         .callout {
@@ -277,14 +354,37 @@
             font-size: 0.93em;
         }
 
-        .callout-note   { background: #fff8f0; border-color: var(--warn-border); }
-        .callout-tip    { background: #f0faf4; border-color: var(--tip-border); }
-        .callout-key    { background: var(--red-light); border-color: var(--red); }
+        .callout-note {
+            background: #fff8f0;
+            border-color: var(--warn-border);
+        }
 
-        .callout strong:first-child { display: block; margin-bottom: 4px; }
-        .callout-note strong:first-child   { color: #d35400; }
-        .callout-tip strong:first-child    { color: #27ae60; }
-        .callout-key strong:first-child    { color: var(--red-dark); }
+        .callout-tip {
+            background: #f0faf4;
+            border-color: var(--tip-border);
+        }
+
+        .callout-key {
+            background: var(--red-light);
+            border-color: var(--red);
+        }
+
+        .callout strong:first-child {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .callout-note strong:first-child {
+            color: #d35400;
+        }
+
+        .callout-tip strong:first-child {
+            color: #27ae60;
+        }
+
+        .callout-key strong:first-child {
+            color: var(--red-dark);
+        }
 
         /* ── Checkpoint Box ───────────────────────────────── */
         .checkpoint {
@@ -310,13 +410,18 @@
         .checkpoint h4::before {
             content: '';
             display: inline-block;
-            width: 14px; height: 14px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: var(--red-light);
             border: 2px solid var(--red);
         }
 
-        .checkpoint ul { list-style: none; padding: 0; margin: 0; }
+        .checkpoint ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
         .checkpoint li {
             display: flex;
@@ -327,10 +432,13 @@
             font-size: 0.9em;
         }
 
-        .checkpoint li:last-child { border-bottom: none; }
+        .checkpoint li:last-child {
+            border-bottom: none;
+        }
 
         .chk-box {
-            width: 18px; height: 18px;
+            width: 18px;
+            height: 18px;
             border: 2px solid #ccc;
             border-radius: 3px;
             flex-shrink: 0;
@@ -339,12 +447,34 @@
             transition: all 0.15s;
         }
 
-        .chk-box:hover { border-color: var(--red); }
-        .chk-box.done { background: var(--red); border-color: var(--red); }
-        .chk-box.done::after { content: '✓'; color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center; height: 100%; font-weight: bold; }
+        .chk-box:hover {
+            border-color: var(--red);
+        }
 
-        .chk-label { cursor: pointer; }
-        .chk-label.done { text-decoration: line-through; color: #aaa; }
+        .chk-box.done {
+            background: var(--red);
+            border-color: var(--red);
+        }
+
+        .chk-box.done::after {
+            content: '✓';
+            color: #fff;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-weight: bold;
+        }
+
+        .chk-label {
+            cursor: pointer;
+        }
+
+        .chk-label.done {
+            text-decoration: line-through;
+            color: #aaa;
+        }
 
         /* screenshot placeholder */
         .screenshot-placeholder {
@@ -358,10 +488,18 @@
             background: #fafafa;
         }
 
-        .screenshot-placeholder span { font-size: 1.5em; display: block; margin-bottom: 6px; opacity: 0.4; }
+        .screenshot-placeholder span {
+            font-size: 1.5em;
+            display: block;
+            margin-bottom: 6px;
+            opacity: 0.4;
+        }
 
         /* ── Table ────────────────────────────────────────── */
-        .table-wrap { overflow-x: auto; margin: 1rem 0 1.5rem; }
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1rem 0 1.5rem;
+        }
 
         table {
             width: 100%;
@@ -382,10 +520,17 @@
             border-bottom: 1px solid var(--border);
         }
 
-        tr:nth-child(even) td { background: #fdf2f2; }
-        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) td {
+            background: #fdf2f2;
+        }
 
-        tbody tr:hover td { background: var(--red-light); }
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: var(--red-light);
+        }
 
         /* ── Step Badge ───────────────────────────────────── */
         .step-badge {
@@ -403,10 +548,13 @@
         }
 
         .step-badge .num {
-            background: rgba(0,0,0,0.25);
+            background: rgba(0, 0, 0, 0.25);
             border-radius: 50%;
-            width: 22px; height: 22px;
-            display: flex; align-items: center; justify-content: center;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.9em;
         }
 
@@ -430,12 +578,22 @@
         }
 
         .terminal-bar .dot {
-            width: 12px; height: 12px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
         }
-        .terminal-bar .dot.r { background: #ff5f57; }
-        .terminal-bar .dot.y { background: #ffbd2e; }
-        .terminal-bar .dot.g { background: #28c840; }
+
+        .terminal-bar .dot.r {
+            background: #ff5f57;
+        }
+
+        .terminal-bar .dot.y {
+            background: #ffbd2e;
+        }
+
+        .terminal-bar .dot.g {
+            background: #28c840;
+        }
 
         .terminal-bar .tbar-label {
             margin-left: 8px;
@@ -467,7 +625,9 @@
         }
 
         @media (max-width: 700px) {
-            .terminals-row { grid-template-columns: 1fr; }
+            .terminals-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* ── Progress bar (checklist summary) ────────────── */
@@ -519,12 +679,15 @@
             margin-bottom: 8px;
         }
 
-        .completion-banner p { margin: 4px 0; opacity: 0.9; }
+        .completion-banner p {
+            margin: 4px 0;
+            opacity: 0.9;
+        }
 
         .completion-badge {
             display: inline-block;
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.5);
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 30px;
             padding: 8px 24px;
             margin-top: 14px;
@@ -535,220 +698,266 @@
 
         /* ── Responsive ───────────────────────────────────── */
         @media (max-width: 900px) {
-            #sidebar { transform: translateX(-100%); transition: transform 0.3s; }
-            #sidebar.open { transform: translateX(0); }
-            #main { margin-left: 0; }
-            .content { padding: 24px 22px 60px; }
-            .topbar { padding: 12px 22px; }
+            #sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            #sidebar.open {
+                transform: translateX(0);
+            }
+
+            #main {
+                margin-left: 0;
+            }
+
+            .content {
+                padding: 24px 22px 60px;
+            }
+
+            .topbar {
+                padding: 12px 22px;
+            }
         }
 
         @media (max-width: 600px) {
-            h1 { font-size: 1.6em; }
+            h1 {
+                font-size: 1.6em;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<!-- ═══════════════════════════════════════════════════════ SIDEBAR -->
-<nav id="sidebar">
-    <div class="sidebar-brand">
-        <div class="project-name">ROS 2 Diff Drive Robot</div>
-        <div class="project-sub">Workshop &amp; Verification Manual</div>
-    </div>
-
-    <div class="sidebar-nav">
-        <div class="nav-section-title">Introduction</div>
-        <a class="nav-item" href="#overview">Workshop Overview</a>
-        <a class="nav-item sub" href="#objective">Objective</a>
-        <a class="nav-item" href="#prerequisites">Prerequisites</a>
-        <a class="nav-item" href="#env-setup">Environment Setup</a>
-
-        <div class="nav-section-title">Steps</div>
-        <a class="nav-item" href="#step1">Step 1 – Chassis in RViz2</a>
-        <a class="nav-item" href="#step2">Step 2 – Study Components</a>
-        <a class="nav-item" href="#step3">Step 3 – Robot Assembly</a>
-        <a class="nav-item sub" href="#ph1">Placeholder 1 – Left Wheel</a>
-        <a class="nav-item sub" href="#ph2">Placeholder 2 – Right Wheel</a>
-        <a class="nav-item sub" href="#ph3">Placeholder 3 – Caster Friction</a>
-        <a class="nav-item sub" href="#ph4">Placeholder 4 – Diff Drive Plugin</a>
-        <a class="nav-item" href="#step4">Step 4 – Validate URDF</a>
-        <a class="nav-item" href="#step5">Step 5 – Full Robot in RViz2</a>
-        <a class="nav-item" href="#step6">Step 6 – Simulate &amp; Drive</a>
-        <a class="nav-item" href="#step7">Step 7 – Teleop Keyboard</a>
-
-        <div class="nav-section-title">Wrap Up</div>
-        <a class="nav-item" href="#checklist">Completion Checklist</a>
-        <a class="nav-item" href="#outcome">Final Outcome</a>
-    </div>
-</nav>
-
-<!-- ═══════════════════════════════════════════════════════ MAIN -->
-<div id="main">
-
-    <div class="topbar">
-        <span class="topbar-crumb">
-            <a href="#">ROS 2 Workshop</a>
-            <span class="topbar-sep"> / </span>
-            Differential Drive Robot Guide
-        </span>
-    </div>
-
-    <div class="content">
-
-        <!-- ── Title ─────────────────────────────────────── -->
-        <h1 id="overview">ROS 2 Differential Drive Robot Workshop</h1>
-        <h2 style="border:none;margin-top:0;color:var(--muted);font-size:1.1em;font-weight:400;">Student Hands-On Guide and Verification Manual</h2>
-
-        <hr>
-
-        <!-- ── Workshop Overview ─────────────────────────── -->
-        <h1 id="overview-h">Workshop Overview</h1>
-
-        <h2 id="objective">Objective</h2>
-
-        <p>In this workshop, you will:</p>
-        <ul>
-            <li>Understand the structure of a ROS 2 robot description (URDF).</li>
-            <li>Build a complete differential drive robot model.</li>
-            <li>Visualize the robot in RViz2.</li>
-            <li>Validate the robot structure using URDF tools.</li>
-            <li>Simulate the robot in Gazebo.</li>
-            <li>Control the robot using ROS 2 topics.</li>
-        </ul>
-
-        <div class="callout callout-tip">
-            <strong>Goal</strong>
-            By the end of this exercise, you will have a fully functional differential drive robot that can be driven inside Gazebo simulation.
+    <!-- ═══════════════════════════════════════════════════════ SIDEBAR -->
+    <nav id="sidebar">
+        <div class="sidebar-brand">
+            <div class="project-name">ROS 2 Diff Drive Robot</div>
+            <div class="project-sub">Workshop &amp; Verification Manual</div>
         </div>
 
-        <hr>
+        <div class="sidebar-nav">
+            <div class="nav-section-title">Introduction</div>
+            <a class="nav-item" href="#overview">Workshop Overview</a>
+            <a class="nav-item sub" href="#objective">Objective</a>
+            <a class="nav-item" href="#prerequisites">Prerequisites</a>
+            <a class="nav-item" href="#env-setup">Environment Setup</a>
 
-        <!-- ── Prerequisites ─────────────────────────────── -->
-        <h1 id="prerequisites">Prerequisites</h1>
+            <div class="nav-section-title">Steps</div>
+            <a class="nav-item" href="#step1">Step 1 – Chassis in RViz2</a>
+            <a class="nav-item" href="#step2">Step 2 – Study Components</a>
+            <a class="nav-item" href="#step3">Step 3 – Robot Assembly</a>
+            <a class="nav-item sub" href="#ph1">Placeholder 1 – Left Wheel</a>
+            <a class="nav-item sub" href="#ph2">Placeholder 2 – Right Wheel</a>
+            <a class="nav-item sub" href="#ph3">Placeholder 3 – Caster Friction</a>
+            <a class="nav-item sub" href="#ph4">Placeholder 4 – Diff Drive Plugin</a>
+            <a class="nav-item" href="#step4">Step 4 – Validate URDF</a>
+            <a class="nav-item" href="#step5">Step 5 – Full Robot in RViz2</a>
+            <a class="nav-item" href="#step6">Step 6 – Simulate &amp; Drive</a>
+            <a class="nav-item" href="#step7">Step 7 – Teleop Keyboard</a>
+            <a class="nav-item" href="#step8">Step 8 – Warehouse Challenge</a>
+            <a class="nav-item sub" href="#mission1">Mission 1 – Red Cube</a>
+            <a class="nav-item sub" href="#mission2">Mission 2 – Blue Cube</a>
+            <a class="nav-item sub" href="#mission3">Mission 3 – Green Cube</a>
+            <a class="nav-item sub" href="#mission4">Mission 4 – Yellow Cube</a>
+            <a class="nav-item sub" href="#bonus">Bonus Challenge</a>
 
-        <p>Before starting, ensure:</p>
-        <ul>
-            <li>ROS 2 Humble is installed.</li>
-            <li>Gazebo / Ignition Gazebo is installed.</li>
-            <li>Workshop files are available on your Desktop.</li>
-            <li>Terminal access is working properly.</li>
-        </ul>
+            <div class="nav-section-title">Wrap Up</div>
+            <a class="nav-item" href="#checklist">Completion Checklist</a>
+            <a class="nav-item" href="#outcome">Final Outcome</a>
+        </div>
+    </nav>
 
-        <hr>
+    <!-- ═══════════════════════════════════════════════════════ MAIN -->
+    <div id="main">
 
-        <!-- ── Environment Setup ─────────────────────────── -->
-        <h1 id="env-setup">Environment Setup</h1>
+        <div class="topbar">
+            <span class="topbar-crumb">
+                <a href="#">ROS 2 Workshop</a>
+                <span class="topbar-sep"> / </span>
+                Differential Drive Robot Guide
+            </span>
+        </div>
 
-        <p>Open a terminal and run:</p>
+        <div class="content">
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <!-- ── Title ─────────────────────────────────────── -->
+            <h1 id="overview">ROS 2 Differential Drive Robot Workshop</h1>
+            <h2 style="border:none;margin-top:0;color:var(--muted);font-size:1.1em;font-weight:400;">Student Hands-On
+                Guide and Verification Manual</h2>
+
+            <hr>
+
+            <!-- ── Workshop Overview ─────────────────────────── -->
+            <h1 id="overview-h">Workshop Overview</h1>
+
+            <h2 id="objective">Objective</h2>
+
+            <p>In this workshop, you will:</p>
+            <ul>
+                <li>Understand the structure of a ROS 2 robot description (URDF).</li>
+                <li>Build a complete differential drive robot model.</li>
+                <li>Visualize the robot in RViz2.</li>
+                <li>Validate the robot structure using URDF tools.</li>
+                <li>Simulate the robot in Gazebo.</li>
+                <li>Control the robot using ROS 2 topics.</li>
+            </ul>
+
+            <div class="callout callout-tip">
+                <strong>Goal</strong>
+                By the end of this exercise, you will have a fully functional differential drive robot that can be
+                driven inside Gazebo simulation.
             </div>
-            <div class="terminal-body">cd ~/Desktop/diff_drive_workshop
-source /opt/ros/humble/setup.bash</div>
-        </div>
 
-        <h3>Verification</h3>
-        <p>You should now be inside the workshop directory and have the ROS 2 environment loaded.</p>
+            <hr>
 
-        <hr>
+            <!-- ── Prerequisites ─────────────────────────────── -->
+            <h1 id="prerequisites">Prerequisites</h1>
 
-        <!-- ══════════════════════════════════════════════════
+            <p>Before starting, ensure:</p>
+            <ul>
+                <li>ROS 2 Humble is installed.</li>
+                <li>Gazebo / Ignition Gazebo is installed.</li>
+                <li>Workshop files are available on your Desktop.</li>
+                <li>Terminal access is working properly.</li>
+            </ul>
+
+            <hr>
+
+            <!-- ── Environment Setup ─────────────────────────── -->
+            <h1 id="env-setup">Environment Setup</h1>
+
+            <p>Open a terminal and run:</p>
+
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">cd ~/Desktop/diff_drive_workshop
+                    source /opt/ros/humble/setup.bash</div>
+            </div>
+
+            <h3>Verification</h3>
+            <p>You should now be inside the workshop directory and have the ROS 2 environment loaded.</p>
+
+            <hr>
+
+            <!-- ══════════════════════════════════════════════════
              STEP 1
         ═══════════════════════════════════════════════════════ -->
-        <h1 id="step1">
-            <span class="step-badge"><span class="num">1</span>Step 1</span><br>
-            Visualize the Chassis in RViz2
-        </h1>
+            <h1 id="step1">
+                <span class="step-badge"><span class="num">1</span>Step 1</span><br>
+                Visualize the Chassis in RViz2
+            </h1>
 
-        <p>Launch the chassis model:</p>
+            <p>Launch the chassis model:</p>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">ros2 launch launch/workshop_rviz.launch.py urdf:=urdf/01_chassis.urdf.xml
+                </div>
             </div>
-            <div class="terminal-body">ros2 launch launch/workshop_rviz.launch.py urdf:=urdf/01_chassis.urdf.xml</div>
-        </div>
 
-        <h2>Expected Result</h2>
-        <p>You should see:</p>
-        <ul>
-            <li>A gray rectangular chassis.</li>
-            <li>TF Tree showing:</li>
-        </ul>
+            <h2>Expected Result</h2>
+            <p>You should see:</p>
+            <ul>
+                <li>A gray rectangular chassis.</li>
+                <li>TF Tree showing:</li>
+            </ul>
 
-        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>base_footprint
+            <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>base_footprint
 └── base_link</code></pre>
 
-        <div class="checkpoint">
-            <h4>Checkpoint</h4>
-            <ul>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Chassis visible</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">TF tree visible</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">No errors in terminal</span></li>
-            </ul>
-        </div>
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Chassis
+                            visible</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">TF tree
+                            visible</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">No errors in
+                            terminal</span>
+                    </li>
+                </ul>
+            </div>
 
-        <h3>Screenshot</h3>
-        <div class="screenshot-placeholder"><span>📷</span>(Insert Screenshot Here)</div>
+            <h3>Screenshot</h3>
+            <div class="screenshot-placeholder"><span>📷</span>(Insert Screenshot Here)</div>
 
-        <hr>
+            <hr>
 
-        <!-- ══════════════════════════════════════════════════
+            <!-- ══════════════════════════════════════════════════
              STEP 2
         ═══════════════════════════════════════════════════════ -->
-        <h1 id="step2">
-            <span class="step-badge"><span class="num">2</span>Step 2</span><br>
-            Study Existing Components
-        </h1>
+            <h1 id="step2">
+                <span class="step-badge"><span class="num">2</span>Step 2</span><br>
+                Study Existing Components
+            </h1>
 
-        <p>No terminal commands are required.</p>
-        <p>Open and inspect:</p>
+            <p>No terminal commands are required.</p>
+            <p>Open and inspect:</p>
 
-        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>urdf/02_wheels.urdf.xml
+            <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>urdf/02_wheels.urdf.xml
 urdf/03_caster.urdf.xml</code></pre>
 
-        <h2>Learning Goal</h2>
-        <p>Understand how:</p>
-        <ul>
-            <li>Links are defined</li>
-            <li>Joints connect links</li>
-            <li>Wheel geometry is modeled</li>
-            <li>Caster assembly is constructed</li>
-        </ul>
-
-        <div class="checkpoint">
-            <h4>Checkpoint</h4>
+            <h2>Learning Goal</h2>
+            <p>Understand how:</p>
             <ul>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Reviewed wheel definition</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Reviewed caster definition</span></li>
+                <li>Links are defined</li>
+                <li>Joints connect links</li>
+                <li>Wheel geometry is modeled</li>
+                <li>Caster assembly is constructed</li>
             </ul>
-        </div>
 
-        <hr>
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Reviewed wheel
+                            definition</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Reviewed caster
+                            definition</span>
+                    </li>
+                </ul>
+            </div>
 
-        <!-- ══════════════════════════════════════════════════
+            <hr>
+
+            <!-- ══════════════════════════════════════════════════
              STEP 3
         ═══════════════════════════════════════════════════════ -->
-        <h1 id="step3">
-            <span class="step-badge"><span class="num">3</span>Step 3</span><br>
-            Complete Robot Assembly
-        </h1>
+            <h1 id="step3">
+                <span class="step-badge"><span class="num">3</span>Step 3</span><br>
+                Complete Robot Assembly
+            </h1>
 
-        <p>Open:</p>
-        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>urdf/04_robot_assembly.urdf.xml</code></pre>
-        <p>Fill the missing placeholders below.</p>
+            <p>Open:</p>
+            <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>urdf/04_robot_assembly.urdf.xml</code></pre>
+            <p>Fill the missing placeholders below.</p>
 
-        <!-- Placeholder 1 -->
-        <hr>
-        <h2 id="ph1">Placeholder 1 – Left Wheel Joint</h2>
+            <!-- Placeholder 1 -->
+            <hr>
+            <h2 id="ph1">Placeholder 1 – Left Wheel Joint</h2>
 
-        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>&lt;joint name="left_wheel_joint" type="continuous"&gt;
+            <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>&lt;joint name="left_wheel_joint" type="continuous"&gt;
   &lt;parent link="base_link"/&gt;
   &lt;child  link="left_wheel_link"/&gt;
   &lt;origin xyz="0.0 0.1125 -0.025" rpy="0.0 0.0 0.0"/&gt;
@@ -756,19 +965,19 @@ urdf/03_caster.urdf.xml</code></pre>
   &lt;dynamics damping="0.1" friction="0.1"/&gt;
 &lt;/joint&gt;</code></pre>
 
-        <h3>Understanding</h3>
-        <p>This joint:</p>
-        <ul>
-            <li>Connects the chassis to the left wheel.</li>
-            <li>Allows continuous rotation.</li>
-            <li>Rotates around the Y-axis.</li>
-        </ul>
+            <h3>Understanding</h3>
+            <p>This joint:</p>
+            <ul>
+                <li>Connects the chassis to the left wheel.</li>
+                <li>Allows continuous rotation.</li>
+                <li>Rotates around the Y-axis.</li>
+            </ul>
 
-        <!-- Placeholder 2 -->
-        <hr>
-        <h2 id="ph2">Placeholder 2 – Right Wheel Joint</h2>
+            <!-- Placeholder 2 -->
+            <hr>
+            <h2 id="ph2">Placeholder 2 – Right Wheel Joint</h2>
 
-        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>&lt;joint name="right_wheel_joint" type="continuous"&gt;
+            <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>&lt;joint name="right_wheel_joint" type="continuous"&gt;
   &lt;parent link="base_link"/&gt;
   &lt;child  link="right_wheel_link"/&gt;
   &lt;origin xyz="0.0 -0.1125 -0.025" rpy="0.0 0.0 0.0"/&gt;
@@ -776,18 +985,18 @@ urdf/03_caster.urdf.xml</code></pre>
   &lt;dynamics damping="0.1" friction="0.1"/&gt;
 &lt;/joint&gt;</code></pre>
 
-        <h3>Understanding</h3>
-        <p>This joint:</p>
-        <ul>
-            <li>Connects the chassis to the right wheel.</li>
-            <li>Allows continuous wheel rotation.</li>
-        </ul>
+            <h3>Understanding</h3>
+            <p>This joint:</p>
+            <ul>
+                <li>Connects the chassis to the right wheel.</li>
+                <li>Allows continuous wheel rotation.</li>
+            </ul>
 
-        <!-- Placeholder 3 -->
-        <hr>
-        <h2 id="ph3">Placeholder 3 – Caster Friction Configuration</h2>
+            <!-- Placeholder 3 -->
+            <hr>
+            <h2 id="ph3">Placeholder 3 – Caster Friction Configuration</h2>
 
-        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>&lt;gazebo reference="caster_wheel_link"&gt;
+            <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>&lt;gazebo reference="caster_wheel_link"&gt;
   &lt;mu1&gt;0.0&lt;/mu1&gt;
   &lt;mu2&gt;0.0&lt;/mu2&gt;
   &lt;kp&gt;1000000.0&lt;/kp&gt;
@@ -795,19 +1004,19 @@ urdf/03_caster.urdf.xml</code></pre>
   &lt;minDepth&gt;0.001&lt;/minDepth&gt;
 &lt;/gazebo&gt;</code></pre>
 
-        <h3>Understanding</h3>
-        <p>This configuration:</p>
-        <ul>
-            <li>Minimizes caster wheel friction.</li>
-            <li>Improves simulation stability.</li>
-            <li>Prevents unwanted resistance during movement.</li>
-        </ul>
+            <h3>Understanding</h3>
+            <p>This configuration:</p>
+            <ul>
+                <li>Minimizes caster wheel friction.</li>
+                <li>Improves simulation stability.</li>
+                <li>Prevents unwanted resistance during movement.</li>
+            </ul>
 
-        <!-- Placeholder 4 -->
-        <hr>
-        <h2 id="ph4">Placeholder 4 – Differential Drive Plugin</h2>
+            <!-- Placeholder 4 -->
+            <hr>
+            <h2 id="ph4">Placeholder 4 – Differential Drive Plugin</h2>
 
-        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>&lt;gazebo&gt;
+            <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>&lt;gazebo&gt;
   &lt;plugin
       filename="ignition-gazebo-diff-drive-system"
       name="ignition::gazebo::systems::DiffDrive"&gt;
@@ -823,284 +1032,358 @@ urdf/03_caster.urdf.xml</code></pre>
   &lt;/plugin&gt;
 &lt;/gazebo&gt;</code></pre>
 
-        <h3>Understanding</h3>
-        <p>This plugin:</p>
-        <ul>
-            <li>Converts velocity commands into wheel motion.</li>
-            <li>Publishes odometry information.</li>
-            <li>Enables robot driving inside Gazebo.</li>
-        </ul>
-
-        <div class="checkpoint">
-            <h4>Checkpoint</h4>
+            <h3>Understanding</h3>
+            <p>This plugin:</p>
             <ul>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">All placeholders completed</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">File saved successfully</span></li>
+                <li>Converts velocity commands into wheel motion.</li>
+                <li>Publishes odometry information.</li>
+                <li>Enables robot driving inside Gazebo.</li>
             </ul>
-        </div>
 
-        <hr>
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">All placeholders
+                            completed</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">File saved
+                            successfully</span>
+                    </li>
+                </ul>
+            </div>
 
-        <!-- ══════════════════════════════════════════════════
+            <hr>
+
+            <!-- ══════════════════════════════════════════════════
              STEP 4
         ═══════════════════════════════════════════════════════ -->
-        <h1 id="step4">
-            <span class="step-badge"><span class="num">4</span>Step 4</span><br>
-            Validate the URDF
-        </h1>
+            <h1 id="step4">
+                <span class="step-badge"><span class="num">4</span>Step 4</span><br>
+                Validate the URDF
+            </h1>
 
-        <p>Run:</p>
+            <p>Run:</p>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">check_urdf urdf/04_robot_assembly.urdf.xml</div>
             </div>
-            <div class="terminal-body">check_urdf urdf/04_robot_assembly.urdf.xml</div>
-        </div>
 
-        <h2>Expected Output</h2>
+            <h2>Expected Output</h2>
 
-        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>root Link: base_footprint has 1 child(ren)
+            <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>root Link: base_footprint has 1 child(ren)
     child(1):  base_link
         child(1):  caster_bracket_link
             child(1):  caster_wheel_link
         child(2):  left_wheel_link
         child(3):  right_wheel_link</code></pre>
 
-        <h2>What This Means</h2>
-        <p>The robot has:</p>
-        <ul>
-            <li>One root link</li>
-            <li>Proper wheel connections</li>
-            <li>Proper caster assembly</li>
-            <li>Valid robot hierarchy</li>
-        </ul>
-
-        <div class="checkpoint">
-            <h4>Checkpoint</h4>
+            <h2>What This Means</h2>
+            <p>The robot has:</p>
             <ul>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">URDF validation passed</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">No parsing errors</span></li>
+                <li>One root link</li>
+                <li>Proper wheel connections</li>
+                <li>Proper caster assembly</li>
+                <li>Valid robot hierarchy</li>
             </ul>
-        </div>
 
-        <hr>
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">URDF validation
+                            passed</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">No parsing
+                            errors</span>
+                    </li>
+                </ul>
+            </div>
 
-        <h2>Common Validation Error</h2>
+            <hr>
 
-        <div class="callout callout-note">
-            <strong>Error: Two root links found</strong>
-            <p style="margin:0"><strong>Cause:</strong> A wheel joint contains a typo in <code>&lt;parent&gt;</code> or <code>&lt;child&gt;</code>.</p>
-            <p style="margin:0.5rem 0 0"><strong>Fix:</strong> Verify all link names exactly match the link definitions.</p>
-        </div>
+            <h2>Common Validation Error</h2>
 
-        <hr>
+            <div class="callout callout-note">
+                <strong>Error: Two root links found</strong>
+                <p style="margin:0"><strong>Cause:</strong> A wheel joint contains a typo in <code>&lt;parent&gt;</code>
+                    or <code>&lt;child&gt;</code>.</p>
+                <p style="margin:0.5rem 0 0"><strong>Fix:</strong> Verify all link names exactly match the link
+                    definitions.</p>
+            </div>
 
-        <!-- ══════════════════════════════════════════════════
+            <hr>
+
+            <!-- ══════════════════════════════════════════════════
              STEP 5
         ═══════════════════════════════════════════════════════ -->
-        <h1 id="step5">
-            <span class="step-badge"><span class="num">5</span>Step 5</span><br>
-            Visualize Full Robot in RViz2
-        </h1>
+            <h1 id="step5">
+                <span class="step-badge"><span class="num">5</span>Step 5</span><br>
+                Visualize Full Robot in RViz2
+            </h1>
 
-        <p>Launch:</p>
+            <p>Launch:</p>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">ros2 launch launch/workshop_rviz.launch.py
+                    urdf:=urdf/04_robot_assembly.urdf.xml</div>
             </div>
-            <div class="terminal-body">ros2 launch launch/workshop_rviz.launch.py urdf:=urdf/04_robot_assembly.urdf.xml</div>
-        </div>
 
-        <h2>Expected Result</h2>
-        <p>You should see:</p>
-        <ul>
-            <li>Chassis</li>
-            <li>Left wheel</li>
-            <li>Right wheel</li>
-            <li>Caster assembly</li>
-        </ul>
-
-        <p>Move the Joint State Publisher sliders and verify:</p>
-        <ul>
-            <li>Wheels rotate correctly.</li>
-            <li>Robot model remains stable.</li>
-        </ul>
-
-        <div class="checkpoint">
-            <h4>Checkpoint</h4>
+            <h2>Expected Result</h2>
+            <p>You should see:</p>
             <ul>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Full robot visible</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Wheel joints rotate</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">No TF errors</span></li>
+                <li>Chassis</li>
+                <li>Left wheel</li>
+                <li>Right wheel</li>
+                <li>Caster assembly</li>
             </ul>
-        </div>
 
-        <h3>Screenshot</h3>
-        <div class="screenshot-placeholder"><span>📷</span>(Insert Screenshot Here)</div>
+            <p>Move the Joint State Publisher sliders and verify:</p>
+            <ul>
+                <li>Wheels rotate correctly.</li>
+                <li>Robot model remains stable.</li>
+            </ul>
 
-        <hr>
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Full robot
+                            visible</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Wheel joints
+                            rotate</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">No TF
+                            errors</span>
+                    </li>
+                </ul>
+            </div>
 
-        <!-- ══════════════════════════════════════════════════
+            <h3>Screenshot</h3>
+            <div class="screenshot-placeholder"><span>📷</span>(Insert Screenshot Here)</div>
+
+            <hr>
+
+            <!-- ══════════════════════════════════════════════════
              STEP 6
         ═══════════════════════════════════════════════════════ -->
-        <h1 id="step6">
-            <span class="step-badge"><span class="num">6</span>Step 6</span><br>
-            Simulate and Drive the Robot
-        </h1>
+            <h1 id="step6">
+                <span class="step-badge"><span class="num">6</span>Step 6</span><br>
+                Simulate and Drive the Robot
+            </h1>
 
-        <h2>Terminal 1</h2>
-        <p>Launch Gazebo:</p>
+            <h2>Terminal 1</h2>
+            <p>Launch Gazebo:</p>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal 1</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal 1</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">ros2 launch launch/gazebo.launch.py</div>
             </div>
-            <div class="terminal-body">ros2 launch launch/gazebo.launch.py</div>
-        </div>
 
-        <p>Wait until:</p>
-        <ul>
-            <li>Gazebo opens.</li>
-            <li>Robot appears in simulation.</li>
-        </ul>
+            <p>Wait until:</p>
+            <ul>
+                <li>Gazebo opens.</li>
+                <li>Robot appears in simulation.</li>
+            </ul>
 
-        <h2>Terminal 2</h2>
-        <p>Load ROS 2 environment:</p>
+            <h2>Terminal 2</h2>
+            <p>Load ROS 2 environment:</p>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal 2</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal 2</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">source /opt/ros/humble/setup.bash</div>
             </div>
-            <div class="terminal-body">source /opt/ros/humble/setup.bash</div>
-        </div>
 
-        <h2>Move Forward</h2>
+            <h2>Move Forward</h2>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal 2</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal 2</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2}}" --once
+                </div>
             </div>
-            <div class="terminal-body">ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2}}" --once</div>
-        </div>
 
-        <div class="callout callout-tip"><strong>Expected</strong> The robot moves forward.</div>
+            <div class="callout callout-tip"><strong>Expected</strong> The robot moves forward.</div>
 
-        <h2>Rotate</h2>
+            <h2>Rotate</h2>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal 2</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal 2</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{angular: {z: 0.8}}" --once
+                </div>
             </div>
-            <div class="terminal-body">ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{angular: {z: 0.8}}" --once</div>
-        </div>
 
-        <div class="callout callout-tip"><strong>Expected</strong> The robot rotates in place.</div>
+            <div class="callout callout-tip"><strong>Expected</strong> The robot rotates in place.</div>
 
-        <h2>Stop Robot</h2>
+            <h2>Stop Robot</h2>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal 2</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal 2</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{}" --once</div>
             </div>
-            <div class="terminal-body">ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{}" --once</div>
-        </div>
 
-        <div class="callout callout-tip"><strong>Expected</strong> Robot stops.</div>
+            <div class="callout callout-tip"><strong>Expected</strong> Robot stops.</div>
 
-        <hr>
+            <hr>
 
-        <!-- ══════════════════════════════════════════════════
+            <!-- ══════════════════════════════════════════════════
              STEP 7
         ═══════════════════════════════════════════════════════ -->
-        <h1 id="step7">
-            <span class="step-badge"><span class="num">7</span>Step 7</span><br>
-            Drive the Robot Using Teleop Keyboard
-        </h1>
+            <h1 id="step7">
+                <span class="step-badge"><span class="num">7</span>Step 7</span><br>
+                Drive the Robot Using Teleop Keyboard
+            </h1>
 
-        <p>Instead of publishing individual velocity commands, you can control the robot interactively using the ROS 2 Teleop Keyboard node.</p>
+            <p>Instead of publishing individual velocity commands, you can control the robot interactively using the ROS
+                2 Teleop Keyboard node.</p>
 
-        <h2>Terminal 1 – Launch Gazebo</h2>
-        <p>Ensure the simulation is already running:</p>
+            <h2>Terminal 1 – Launch Gazebo</h2>
+            <p>Ensure the simulation is already running:</p>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal 1</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal 1</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">ros2 launch launch/gazebo.launch.py</div>
             </div>
-            <div class="terminal-body">ros2 launch launch/gazebo.launch.py</div>
-        </div>
 
-        <p>Wait until the robot is fully loaded.</p>
+            <p>Wait until the robot is fully loaded.</p>
 
-        <h2>Terminal 2 – Start Teleop Keyboard</h2>
-        <p>Source ROS 2 and launch the keyboard controller:</p>
+            <h2>Terminal 2 – Start Teleop Keyboard</h2>
+            <p>Source ROS 2 and launch the keyboard controller:</p>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal 2</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal 2</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">source /opt/ros/humble/setup.bash
+                    ros2 run teleop_twist_keyboard teleop_twist_keyboard</div>
             </div>
-            <div class="terminal-body">source /opt/ros/humble/setup.bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard</div>
-        </div>
 
-        <p>If the package is not installed:</p>
 
-        <div class="terminal">
-            <div class="terminal-bar">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-                <span class="tbar-label">terminal 2</span>
-                <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+            <h2>Keyboard Controls</h2>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>i</code></td>
+                            <td>Move Forward</td>
+                        </tr>
+                        <tr>
+                            <td><code>,</code></td>
+                            <td>Move Backward</td>
+                        </tr>
+                        <tr>
+                            <td><code>j</code></td>
+                            <td>Rotate Left</td>
+                        </tr>
+                        <tr>
+                            <td><code>l</code></td>
+                            <td>Rotate Right</td>
+                        </tr>
+                        <tr>
+                            <td><code>u</code></td>
+                            <td>Forward + Left</td>
+                        </tr>
+                        <tr>
+                            <td><code>o</code></td>
+                            <td>Forward + Right</td>
+                        </tr>
+                        <tr>
+                            <td><code>m</code></td>
+                            <td>Backward + Left</td>
+                        </tr>
+                        <tr>
+                            <td><code>.</code></td>
+                            <td>Backward + Right</td>
+                        </tr>
+                        <tr>
+                            <td><code>k</code></td>
+                            <td>Stop</td>
+                        </tr>
+                        <tr>
+                            <td><code>q</code> / <code>z</code></td>
+                            <td>Increase / Decrease both speeds</td>
+                        </tr>
+                        <tr>
+                            <td><code>w</code> / <code>x</code></td>
+                            <td>Increase / Decrease linear speed only</td>
+                        </tr>
+                        <tr>
+                            <td><code>e</code> / <code>c</code></td>
+                            <td>Increase / Decrease angular speed only</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="terminal-body">sudo apt install ros-humble-teleop-twist-keyboard</div>
-        </div>
 
-        <h2>Keyboard Controls</h2>
+            <h2>Example Teleop Screen</h2>
+            <p>After launching, you should see a screen similar to:</p>
 
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr><th>Key</th><th>Action</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td><code>i</code></td><td>Move Forward</td></tr>
-                    <tr><td><code>,</code></td><td>Move Backward</td></tr>
-                    <tr><td><code>j</code></td><td>Rotate Left</td></tr>
-                    <tr><td><code>l</code></td><td>Rotate Right</td></tr>
-                    <tr><td><code>u</code></td><td>Forward + Left</td></tr>
-                    <tr><td><code>o</code></td><td>Forward + Right</td></tr>
-                    <tr><td><code>m</code></td><td>Backward + Left</td></tr>
-                    <tr><td><code>.</code></td><td>Backward + Right</td></tr>
-                    <tr><td><code>k</code></td><td>Stop</td></tr>
-                    <tr><td><code>q</code> / <code>z</code></td><td>Increase / Decrease both speeds</td></tr>
-                    <tr><td><code>w</code> / <code>x</code></td><td>Increase / Decrease linear speed only</td></tr>
-                    <tr><td><code>e</code> / <code>c</code></td><td>Increase / Decrease angular speed only</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h2>Example Teleop Screen</h2>
-        <p>After launching, you should see a screen similar to:</p>
-
-        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>Reading from the keyboard and Publishing to Twist!
+            <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>Reading from the keyboard and Publishing to Twist!
 
 Moving around:
   u    i    o
@@ -1113,138 +1396,414 @@ e/c : increase/decrease only angular speed by 10%
 
 CTRL-C to quit</code></pre>
 
-        <hr>
+            <hr>
 
-        <!-- ══════════════════════════════════════════════════
+            <!-- ══════════════════════════════════════════════════
+             STEP 8
+        ═══════════════════════════════════════════════════════ -->
+            <h1 id="step8">
+                <span class="step-badge"><span class="num">8</span>Step 8</span><br>
+                Warehouse Navigation Challenge
+            </h1>
+
+            <p>In this exercise, the robot will be spawned inside a custom warehouse world containing four rooms. Each
+                room contains a colored cube that acts as a navigation target.</p>
+
+            <h3>Terminal 1 – Launch the Warehouse World</h3>
+            <p>Launch the simulation:</p>
+
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal 1</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">source /opt/ros/humble/setup.bash
+                    ros2 launch launch/ware_house.launch.py</div>
+            </div>
+
+            <p>Wait until:</p>
+            <ul>
+                <li>Before launching terminate all the process or running gazebo worlds</li>
+                <li>Gazebo opens successfully.</li>
+                <li>The robot appears in the center of the warehouse.</li>
+                <li>Four colored cubes are visible in separate rooms.</li>
+            </ul>
+
+            <h3>Terminal 2 – Start Teleop Keyboard</h3>
+            <p>Source ROS 2 and launch the keyboard controller:</p>
+
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal 2</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">source /opt/ros/humble/setup.bash
+                    ros2 run teleop_twist_keyboard teleop_twist_keyboard</div>
+            </div>
+
+
+            <h3>Keyboard Controls</h3>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>i</code></td>
+                            <td>Move Forward</td>
+                        </tr>
+                        <tr>
+                            <td><code>,</code></td>
+                            <td>Move Backward</td>
+                        </tr>
+                        <tr>
+                            <td><code>j</code></td>
+                            <td>Rotate Left</td>
+                        </tr>
+                        <tr>
+                            <td><code>l</code></td>
+                            <td>Rotate Right</td>
+                        </tr>
+                        <tr>
+                            <td><code>u</code></td>
+                            <td>Forward + Left</td>
+                        </tr>
+                        <tr>
+                            <td><code>o</code></td>
+                            <td>Forward + Right</td>
+                        </tr>
+                        <tr>
+                            <td><code>m</code></td>
+                            <td>Backward + Left</td>
+                        </tr>
+                        <tr>
+                            <td><code>.</code></td>
+                            <td>Backward + Right</td>
+                        </tr>
+                        <tr>
+                            <td><code>k</code></td>
+                            <td>Stop</td>
+                        </tr>
+                        <tr>
+                            <td><code>q</code> / <code>z</code></td>
+                            <td>Increase / Decrease both speeds</td>
+                        </tr>
+                        <tr>
+                            <td><code>w</code> / <code>x</code></td>
+                            <td>Increase / Decrease linear speed</td>
+                        </tr>
+                        <tr>
+                            <td><code>e</code> / <code>c</code></td>
+                            <td>Increase / Decrease angular speed</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr>
+
+            <h2 id="mission1">Mission 1 – Reach the Red Cube</h2>
+            <p>Using the keyboard controls, drive the robot into the room containing the Red Cube.</p>
+
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Reached the Red
+                            Cube</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">No collision with
+                            walls</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Maintained robot
+                            control</span>
+                    </li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <h2 id="mission2">Mission 2 – Reach the Blue Cube</h2>
+            <p>Drive the robot from its current location to the room containing the Blue Cube.</p>
+
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Reached the Blue
+                            Cube</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Successfully
+                            navigated between rooms</span>
+                    </li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <h2 id="mission3">Mission 3 – Reach the Green Cube</h2>
+            <p>Navigate to the room containing the Green Cube.</p>
+
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Reached the Green
+                            Cube</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot remained
+                            stable</span>
+                    </li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <h2 id="mission4">Mission 4 – Reach the Yellow Cube</h2>
+            <p>Navigate to the room containing the Yellow Cube.</p>
+
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Reached the
+                            Yellow Cube</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Completed all
+                            navigation tasks</span>
+                    </li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <h2 id="bonus">Bonus Challenge – Autonomous Navigation Script</h2>
+            <p>Instead of using the keyboard, create a ROS 2 Python node that publishes velocity commands to
+                <code>/cmd_vel</code>.
+            </p>
+
+            <p>Your goal is to:</p>
+            <ol>
+                <li>Move the robot forward.</li>
+                <li>Rotate the robot when required.</li>
+                <li>Navigate the robot into a selected room automatically.</li>
+            </ol>
+
+            <p>Example command used by your node:</p>
+
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <div class="dot r"></div>
+                    <div class="dot y"></div>
+                    <div class="dot g"></div>
+                    <span class="tbar-label">terminal</span>
+                    <button class="copy-btn" onclick="copyTerminal(this)">Copy</button>
+                </div>
+                <div class="terminal-body">ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
+                    "{linear: {x: 0.2}}" --once</div>
+            </div>
+
+            <h3>Learning Outcomes</h3>
+            <p>By completing this challenge, you have learned how to:</p>
+            <ul>
+                <li>Launch a robot in a custom Gazebo world</li>
+                <li>Control a robot using Teleop Keyboard</li>
+                <li>Publish velocity commands using <code>/cmd_vel</code></li>
+                <li>Navigate a differential-drive robot</li>
+                <li>Develop basic robot motion strategies</li>
+                <li>Prepare for autonomous navigation in ROS 2</li>
+            </ul>
+
+            <hr>
+
+            <p>Then</p>
+
+            <!-- ══════════════════════════════════════════════════
              CHECKLIST
         ═══════════════════════════════════════════════════════ -->
-        <h1 id="checklist">Workshop Completion Checklist</h1>
+            <h1 id="checklist">Workshop Completion Checklist</h1>
 
-        <div class="progress-widget">
-            <div class="progress-label">
-                <span>Overall Progress</span>
-                <span id="progress-count">0 / 0 completed</span>
+            <div class="progress-widget">
+                <div class="progress-label">
+                    <span>Overall Progress</span>
+                    <span id="progress-count">0 / 0 completed</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
+                </div>
             </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progress-fill"></div>
+
+            <h2>Robot Description</h2>
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Chassis loaded
+                            successfully</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Wheels added
+                            successfully</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Caster added
+                            successfully</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">URDF
+                            validated</span>
+                    </li>
+                </ul>
             </div>
-        </div>
 
-        <h2>Robot Description</h2>
-        <div class="checkpoint">
-            <h4>Checkpoint</h4>
-            <ul>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Chassis loaded successfully</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Wheels added successfully</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Caster added successfully</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">URDF validated</span></li>
-            </ul>
-        </div>
+            <h2>Visualization</h2>
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot visible in
+                            RViz2</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">TF tree
+                            correct</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Joint movement
+                            verified</span>
+                    </li>
+                </ul>
+            </div>
 
-        <h2>Visualization</h2>
-        <div class="checkpoint">
-            <h4>Checkpoint</h4>
-            <ul>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot visible in RViz2</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">TF tree correct</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Joint movement verified</span></li>
-            </ul>
-        </div>
+            <h2>Simulation</h2>
+            <div class="checkpoint">
+                <h4>Checkpoint</h4>
+                <ul>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Gazebo
+                            launched</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot
+                            spawned</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Differential
+                            drive working</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot moved
+                            forward</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot turned
+                            successfully</span>
+                    </li>
+                    <li>
+                        <div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot stopped
+                            successfully</span>
+                    </li>
+                </ul>
+            </div>
 
-        <h2>Simulation</h2>
-        <div class="checkpoint">
-            <h4>Checkpoint</h4>
-            <ul>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Gazebo launched</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot spawned</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Differential drive working</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot moved forward</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot turned successfully</span></li>
-                <li><div class="chk-box" onclick="toggleCheck(this)"></div><span class="chk-label">Robot stopped successfully</span></li>
-            </ul>
-        </div>
+            <hr>
 
-        <hr>
-
-        <!-- ══════════════════════════════════════════════════
+            <!-- ══════════════════════════════════════════════════
              FINAL OUTCOME
         ═══════════════════════════════════════════════════════ -->
-        <h1 id="outcome">Final Outcome</h1>
+            <h1 id="outcome">Final Outcome</h1>
 
-        <div class="completion-banner">
-            <h2>Congratulations!</h2>
-            <p>You have successfully:</p>
-            <ul style="list-style:none;padding:0;margin:12px 0 0;text-align:left;display:inline-block;">
-                <li>✓ Built a ROS 2 differential drive robot.</li>
-                <li>✓ Connected wheels using URDF joints.</li>
-                <li>✓ Configured Gazebo simulation plugins.</li>
-                <li>✓ Validated the robot structure.</li>
-                <li>✓ Controlled the robot using ROS 2 commands.</li>
-                <li>✓ Completed a full robot modeling and simulation workflow.</li>
-            </ul>
-            <div class="completion-badge">Workshop Status: COMPLETE ✅</div>
-        </div>
+            <div class="completion-banner">
+                <h2>Congratulations!</h2>
+                <p>You have successfully:</p>
+                <ul style="list-style:none;padding:0;margin:12px 0 0;text-align:left;display:inline-block;">
+                    <li>✓ Built a ROS 2 differential drive robot.</li>
+                    <li>✓ Connected wheels using URDF joints.</li>
+                    <li>✓ Configured Gazebo simulation plugins.</li>
+                    <li>✓ Validated the robot structure.</li>
+                    <li>✓ Controlled the robot using ROS 2 commands.</li>
+                    <li>✓ Completed a full robot modeling and simulation workflow.</li>
+                </ul>
+                <div class="completion-badge">Workshop Status: COMPLETE ✅</div>
+            </div>
 
-    </div><!-- /content -->
-</div><!-- /main -->
+        </div><!-- /content -->
+    </div><!-- /main -->
 
-<script>
-    /* ── Copy for pre blocks ──────────────────────────── */
-    function copyCode(btn) {
-        const pre = btn.parentElement;
-        const code = pre.querySelector('code');
-        navigator.clipboard.writeText(code.innerText).then(() => {
-            btn.textContent = 'Copied!';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
-        });
-    }
+    <script>
+        /* ── Copy for pre blocks ──────────────────────────── */
+        function copyCode(btn) {
+            const pre = btn.parentElement;
+            const code = pre.querySelector('code');
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+        }
 
-    /* ── Copy for terminal blocks ─────────────────────── */
-    function copyTerminal(btn) {
-        const body = btn.closest('.terminal').querySelector('.terminal-body');
-        navigator.clipboard.writeText(body.innerText).then(() => {
-            btn.textContent = 'Copied!';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
-        });
-    }
+        /* ── Copy for terminal blocks ─────────────────────── */
+        function copyTerminal(btn) {
+            const body = btn.closest('.terminal').querySelector('.terminal-body');
+            navigator.clipboard.writeText(body.innerText).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+        }
 
-    /* ── Interactive checkboxes ───────────────────────── */
-    function toggleCheck(box) {
-        box.classList.toggle('done');
-        const label = box.nextElementSibling;
-        if (label) label.classList.toggle('done');
+        /* ── Interactive checkboxes ───────────────────────── */
+        function toggleCheck(box) {
+            box.classList.toggle('done');
+            const label = box.nextElementSibling;
+            if (label) label.classList.toggle('done');
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const all = document.querySelectorAll('.chk-box');
+            const done = document.querySelectorAll('.chk-box.done');
+            const pct = all.length ? (done.length / all.length) * 100 : 0;
+            document.getElementById('progress-fill').style.width = pct + '%';
+            document.getElementById('progress-count').textContent = `${done.length} / ${all.length} completed`;
+        }
+
+        /* init progress */
         updateProgress();
-    }
 
-    function updateProgress() {
-        const all   = document.querySelectorAll('.chk-box');
-        const done  = document.querySelectorAll('.chk-box.done');
-        const pct   = all.length ? (done.length / all.length) * 100 : 0;
-        document.getElementById('progress-fill').style.width = pct + '%';
-        document.getElementById('progress-count').textContent = `${done.length} / ${all.length} completed`;
-    }
+        /* ── Active sidebar link on scroll ───────────────── */
+        const sections = document.querySelectorAll('h1[id], h2[id]');
+        const navLinks = document.querySelectorAll('#sidebar .nav-item');
 
-    /* init progress */
-    updateProgress();
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    const active = document.querySelector(`#sidebar a[href="#${entry.target.id}"]`);
+                    if (active) active.classList.add('active');
+                }
+            });
+        }, { rootMargin: '-20% 0px -70% 0px' });
 
-    /* ── Active sidebar link on scroll ───────────────── */
-    const sections = document.querySelectorAll('h1[id], h2[id]');
-    const navLinks = document.querySelectorAll('#sidebar .nav-item');
-
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                navLinks.forEach(l => l.classList.remove('active'));
-                const active = document.querySelector(`#sidebar a[href="#${entry.target.id}"]`);
-                if (active) active.classList.add('active');
-            }
-        });
-    }, { rootMargin: '-20% 0px -70% 0px' });
-
-    sections.forEach(s => observer.observe(s));
-</script>
+        sections.forEach(s => observer.observe(s));
+    </script>
 
 </body>
+
 </html>
